@@ -19,9 +19,21 @@ fetch('http://localhost:5678/api/works')
     const filterDiv = document.createElement('div');
     filterDiv.classList.add('filter');
 
+
+     // Créer un bouton de réinitialisation
+      const resetButton = document.createElement('button');
+      resetButton.textContent = 'Tous';
+      resetButton.classList.add('filter-button');
+      resetButton.addEventListener('click', () => {
+        displayProjects(projects);
+      });
+      filterDiv.appendChild(resetButton);
+
+
     // Créer des boutons filtre pour chaque catégorie
-    categories.forEach(category => {
+      categories.forEach(category => {
       const filterButton = document.createElement('button');
+      filterButton.classList.add('filter-button')
       filterButton.textContent = category;
       filterButton.addEventListener('click', () => {
         filterByCategory(category);
