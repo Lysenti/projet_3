@@ -1,38 +1,41 @@
-.modal-container {
+.project-container {
+    flex-basis: 20%; /* Chaque projet prend 20% de l'espace disponible (pour afficher 5 projets par ligne) */
     display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 630px;
-    height: 688px;
-    top: 660px;
-    left: 405px;
-    gap: 0px;
-    border-radius: 10px 0px 0px 0px;
-    opacity: 1;
-
+    flex-direction: column;
+    margin-bottom: 20px; /* Espacement entre les lignes de projets */
 }
 
-/*background modal à ajouter*/
+
 
 .custom-modal {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around; /* Espacement égal entre les images */
+    width: 630px; /* Largeur de la modal */
+    height: auto; /* Ajuster la hauteur automatiquement en fonction du contenu */
     background-color: white;
     padding: 20px;
-    border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-
-
-
-
-
+    overflow: auto;
+    z-index: 1000;
 }
 
 .project-image {
-    width: 15%;
-    height: auto;
-    margin: 10px;
+    width: 70%; /* Ajuster la largeur pour afficher 5 images par ligne */
+    height: auto; /* Pour maintenir le rapport hauteur/largeur */
+    margin: 10px; /* Espacement entre les images */
+}
 
+.background-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Opacité de 50% */
+    z-index: 999;
 }
