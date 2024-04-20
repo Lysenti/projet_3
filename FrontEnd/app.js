@@ -1,3 +1,5 @@
+
+
 fetch('http://localhost:5678/api/works')
   .then(response => {
     if (!response.ok) {
@@ -81,3 +83,5 @@ fetch('http://localhost:5678/api/works')
   .catch(error => {
     console.error('Une erreur s\'est produite :', error);
   });
+
+

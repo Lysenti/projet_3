@@ -9,17 +9,23 @@
 	<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Work+Sans&display=swap" rel="stylesheet">
 	<meta name="description" content="">
 	<link rel="stylesheet" href="./assets/style.css">
+	<link rel="stylesheet" href="./assets/filter.css">
+	<link rel="stylesheet" href="./assets/modal.css">
 	<script src="./app.js" defer></script>
+	<script src="./auth.js" defer></script>
+	<script src="./modal.js" defer></script>
+
+
 
 </head>
-<body>
+<body >
 <header>
 	<h1>Sophie Bluel <span>Architecte d'intérieur</span></h1>
 	<nav>
 		<ul>
 			<li>projets</li>
 			<li>contact</li>
-			<li>login</li>
+			<li><button id="loginButton">Login</button></li>
 			<li><img src="./assets/icons/instagram.png" alt="Instagram"></li>
 		</ul>
 	</nav>
@@ -38,14 +44,10 @@
 	</section>
 	<section id="portfolio">
 		<h2>Mes Projets</h2>
-		<div class="filter">
-
-
-		</div> 
-		<div class="gallery">
-			
-		</div>
+		<div class="filter"></div> 
+		<div class="gallery"></div>
 	</section>
+
 	<section id="contact">
 		<h2>Contact</h2>
 		<p>Vous avez un projet ? Discutons-en !</p>
@@ -67,6 +69,10 @@
 			<li>Mentions Légales</li>
 		</ul>
 	</nav>
+
+
 </footer>
+
+
 </body>
 </html>
