@@ -22,15 +22,6 @@ fetch('http://localhost:5678/api/works')
     filterDiv.classList.add('filter');
 
 
-     // Créer un bouton de réinitialisation
-      const resetButton = document.createElement('button');
-      resetButton.textContent = 'Tous';
-      resetButton.classList.add('filter-button');
-      resetButton.addEventListener('click', () => {
-        displayProjects(projects);
-      });
-      filterDiv.appendChild(resetButton);
-
 
     // Créer des boutons filtre pour chaque catégorie
       categories.forEach(category => {
@@ -55,33 +46,37 @@ fetch('http://localhost:5678/api/works')
       displayProjects(filteredProjects);
     }
 
-    function displayProjects(projectsToDisplay) {
-      // Supprimer tous les projets actuellement affichés
-      gallery.innerHTML = '';
-
-      // Afficher les projets spécifiés
-      projectsToDisplay.forEach(projet => {
-        const projetFigure = document.createElement('figure');
-        projetFigure.classList.add('category');
-
-        // Créer un élément image
-        const imageElement = document.createElement('img');
-        imageElement.src = projet.imageUrl;
-        imageElement.alt = projet.title; // ajout d'une alternative à l'image
-        projetFigure.appendChild(imageElement);
-
-        // Créer un élément légende
-        const figcaptionElement = document.createElement('figcaption');
-        figcaptionElement.textContent = projet.title;
-        projetFigure.appendChild(figcaptionElement);
-
-        gallery.appendChild(projetFigure);
-      });
-    }
-
+    
   })
   .catch(error => {
     console.error('Une erreur s\'est produite :', error);
   });
+
+// Ajoutez cette fonction pour afficher les projets lors du chargement de la page et lors de l'application des filtres
+function displayProjects(projectsToDisplay) {
+  const gallery = document.querySelector('.gallery');
+
+  // Supprimer tous les projets actuellement affichés
+  gallery.innerHTML = '';
+
+  // Afficher les projets spécifiés
+  projectsToDisplay.forEach(projet => {
+      const projetFigure = document.createElement('figure');
+      projetFigure.classList.add('category');
+
+      // Créer un élément image
+      const imageElement = document.createElement('img');
+      imageElement.src = projet.imageUrl;
+      imageElement.alt = projet.title;
+      projetFigure.appendChild(imageElement);
+
+      // Créer un élément légende
+      const figcaptionElement = document.createElement('figcaption');
+      figcaptionElement.textContent = projet.title;
+      projetFigure.appendChild(figcaptionElement);
+
+      gallery.appendChild(projetFigure);
+  });
+}
 
 
