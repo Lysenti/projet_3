@@ -74,7 +74,7 @@ function updateLoginButton(authenticated) {
 
 
 
- 
+ // Appel API pour l'authentification
     fetch('http://localhost:5678/api/users/login', {
         method: 'POST',
         headers: {
