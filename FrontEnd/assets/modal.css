@@ -1,18 +1,33 @@
-.project-container {
-    flex-basis: 20%; /* Chaque projet prend 20% de l'espace disponible (pour afficher 5 projets par ligne) */
+/* Container for each project in the modal */
+.modal-project {
+    flex-basis: 20%; /* Adjust the width for 5 projects per row */
     display: flex;
     flex-direction: column;
-    margin-bottom: 20px; /* Espacement entre les lignes de projets */
+    align-items: center;
+    margin-bottom: 20px; /* Spacing between rows of projects */
+    position: relative; /* Positioning for the delete button */
 }
 
+/* Styling for the delete button */
+.delete-button {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 24px;
+    color: red;
+    padding: 5px;
+}
 
-
+/* Styling for the custom modal */
 .custom-modal {
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-around; /* Espacement égal entre les images */
-    width: 630px; /* Largeur de la modal */
-    height: auto; /* Ajuster la hauteur automatiquement en fonction du contenu */
+    justify-content: space-around; /* Equal spacing between images */
+    width: 630px; /* Width of the modal */
+    height: auto; /* Adjust the height based on content */
     background-color: white;
     padding: 20px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
@@ -24,18 +39,45 @@
     z-index: 1000;
 }
 
-.project-image {
-    width: 70%; /* Ajuster la largeur pour afficher 5 images par ligne */
-    height: auto; /* Pour maintenir le rapport hauteur/largeur */
-    margin: 10px; /* Espacement entre les images */
+/* Styling for the project image */
+.modal-project img {
+    width: 70%; /* Adjust the width to fit 5 images per row */
+    height: auto; /* Maintain the aspect ratio */
+    margin: 10px; /* Spacing between images */
 }
 
+/* Styling for the background overlay of the modal */
 .background-modal {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); /* Opacité de 50% */
+    background-color: rgba(0, 0, 0, 0.5); /* 50% opacity */
     z-index: 999;
+}
+
+/* Styling for the "Add Project" button */
+.add-photo-button {
+    display: inline-block;
+    margin: 10px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+/* Styling for the close button in the modal */
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 24px;
+    color: #000;
+    padding: 5px;
 }

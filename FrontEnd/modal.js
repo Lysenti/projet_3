@@ -1,313 +1,199 @@
-var loginButton = document.getElementById('loginButton');
-var authForm = document.getElementById('authForm');
+var categorySelect = document.createElement('select');
+categorySelect.setAttribute('name', 'category');
+categorySelect.setAttribute('id', 'category');
 
-function updateLoginButton(authenticated) {
+// Fonction pour gérer l'affichage du bouton "Modifier"
+function toggleModifyButton(authenticated) {
+    const modifyButton = document.querySelector('.modify-button');
     if (authenticated) {
-        loginButton.textContent = 'logout';
+        if (!modifyButton) {
+            createModifyButton();
+        }
     } else {
-        loginButton.textContent = 'login';
+        if (modifyButton) {
+            modifyButton.remove();
+        }
     }
 }
 
-// Gestion de la connexion/déconnexion
-function loginLogoutHandler() {
-    if (localStorage.getItem('isAuthenticated') === 'true') {
-        logoutHandler();
-    } else {
-        // Redirection vers la page d'authentification
-        window.location.href = 'auth.html';
+function createModifyButton() {
+    const modifyButton = document.createElement('button');
+    modifyButton.textContent = 'Modifier';
+    modifyButton.classList.add('modify-button');
+    modifyButton.addEventListener('click', openModal);
+    const portfolioSection = document.getElementById('portfolio');
+    if (portfolioSection) {
+        const projectsTitle = portfolioSection.querySelector('h2');
+        if (projectsTitle) {
+            projectsTitle.insertAdjacentElement('afterend', modifyButton);
+        }
     }
 }
 
-function logoutHandler() {
-    console.log("Je clique sur le bouton de déconnexion");
-    if (localStorage.getItem('isAuthenticated') === 'true') {
-        console.log("Je suis authentifié, je vais me déconnecter");
-        // Réinitialisation de l'état d'authentification
-        localStorage.removeItem('isAuthenticated');
-        localStorage.removeItem('userId');
-        localStorage.removeItem('token');
-        console.log("Je suis maintenant déconnecté");
-        // Mettre à jour l'interface utilisateur
-        updateLoginButton(false);
-        console.log("Je vais être redirigé vers la page d'accueil");
-
-        window.location.replace('index.html');
-    } else {
-        console.log("Je ne suis pas authentifié, pas de déconnexion nécessaire.");
-    }
-}
-
-loginButton.addEventListener('click', loginLogoutHandler);
-
-// Soumission formulaire authentification
-authForm.addEventListener('submit', (event) => {
-    event.preventDefault();
-
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value();
-
-    fetch('http://localhost:5678/api/users/login', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ email, password })
-    })
-    .then(response => {
-        if (response.ok) {
-            // Authentification réussie
-            return response.json();
-        } else {
-            throw new Error('Identifiants incorrects');
-        }
-    })
-    .then(data => {
-        // Stockage des informations 
-        localStorage.setItem('userId', data.userId);
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('isAuthenticated', 'true');
-
-        updateLoginButton(true);
-        console.log("je suis connecté");
-        // Redirection 
-        window.location.replace('index.html');
-    })
-    .catch(error => {
-        alert(error.message);
-    });
-});
-
-// Fonction pour fermer la modale
-function closeModal() {
-    const backgroundModal = document.querySelector('.background-modal');
-    const modalContainer = document.querySelector('.modal-container');
-
-    if (backgroundModal && modalContainer) {
-        backgroundModal.remove();
-        modalContainer.remove();
-    }
-}
-
-// Fonction pour supprimer un projet
-function removeProject(userId, token, projectId) {
-    fetch(`http://localhost:5678/api/works/${projectId}?userId=${userId}`, {
-        method: 'DELETE',
-        headers: {
-            'Authorization': `Bearer ${token}`
-        }
-    })
-    .then(response => {
-        if (!response.ok) {
-            throw new Error('Erreur lors de la suppression du projet.');
-        }
-        console.log('Tentative de suppression du projet avec l\'identifiant :', projectId);
-        const projectElement = document.getElementById(`project-${projectId}`);
-        console.log('Element à supprimer :', projectElement);
-        if (projectElement) {
-            projectElement.remove();
-            console.log('Élément supprimé avec succès !');
-        } else {
-            console.log('Aucun élément correspondant trouvé dans le DOM.');
-        }
-    })
-    .catch(error => {
-        console.error('Une erreur s\'est produite lors de la suppression du projet :', error);
-    });
-}
-
-// Fonction pour ajouter un nouveau projet
-function addProject(imageUrl, title) {
-    const projectData = {
-        imageUrl: imageUrl,
-        title: title,
-    };
+function addProject(imageFile, title, categoryId) {
+    const formData = new FormData();
+    formData.append('image', imageFile);
+    formData.append('title', title);
+    formData.append('category', categoryId);
 
     fetch('http://localhost:5678/api/works', {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
         },
-        body: JSON.stringify(projectData),
+        body: formData,
     })
     .then(response => {
         if (!response.ok) {
-            throw new Error('Erreur lors de l\'ajout du projet.');
+            return response.json().then(errData => {
+                throw new Error(errData.message || 'Erreur lors de l\'ajout du projet.');
+            });
         }
+        return response.json();
+    })
+    .then(() => {
+        console.log("Projet ajouté avec succès");
+        displayProjects();
         closeModal();
-        openModal(); // Actualiser la modale
     })
     .catch(error => {
         console.error('Une erreur s\'est produite lors de l\'ajout du projet :', error);
+        alert('Une erreur s\'est produite lors de l\'ajout du projet. Veuillez réessayer.');
     });
 }
 
-// Fonction pour ouvrir la modale et récupérer les données des works
-function openModal() {
-    let modalContainer = document.querySelector('.modal-container');
+function deleteProject(projectId) {
+    return fetch(`http://localhost:5678/api/works/${projectId}`, {
+        method: 'DELETE',
+        headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(errData => {
+                throw new Error(errData.message || 'Erreur lors de la suppression du projet.');
+            });
+        }
+        console.log(`Projet ${projectId} supprimé avec succès.`);
+    });
+}
 
-    if (modalContainer) {
-        console.log("Une modale est déjà ouverte");
-        return; // Sortir de la fonction si une modale est déjà ouverte
-    }
-
-    var userId = localStorage.getItem('userId');
-    var token = localStorage.getItem('token');
-
-    const backgroundModal = document.createElement('div');
-    backgroundModal.classList.add('background-modal');
-
-    // Création de la modale
-    modalContainer = document.createElement('div');
-    modalContainer.classList.add('modal-container'); 
-
-    const modal = document.createElement('div');
-    modal.classList.add('custom-modal');
-
-    // Fonction pour ajouter les éléments récupérés à la modale existante
-    function addElementsToModal(data) {
-        data.forEach(work => {
-            const workContainer = document.createElement('div');
-            workContainer.classList.add('work-container');
-
-            const workImage = document.createElement('img');
-            workImage.src = work.imageUrl;
-            workImage.alt = work.title;
-            workImage.classList.add('work-image');
-
-            const workTitle = document.createElement('h3');
-            workTitle.textContent = work.title;
-
-            const workCategory = document.createElement('p');
-            workCategory.textContent = `Catégorie: ${work.category.name}`;
-
-            workContainer.appendChild(workImage);
-            workContainer.appendChild(workTitle);
-            workContainer.appendChild(workCategory);
-
-            modal.appendChild(workContainer);
+function fetchAndDisplayCategories() {
+    fetch('http://localhost:5678/api/categories', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(response => {
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error('Erreur lors de la récupération des catégories.');
+        }
+    })
+    .then(categories => {
+        categorySelect.innerHTML = ''; // clean du contenu précédent
+        categories.forEach(category => {
+            const option = document.createElement('option');
+            option.value = category.id;
+            option.textContent = category.name;
+            categorySelect.appendChild(option);
         });
-    }
+    })
+    .catch(error => {
+        console.error('Une erreur s\'est produite lors de la récupération des catégories :', error);
+    });
+}
 
-    // Fonction pour récupérer les données des works et les afficher dans la modale
-    function fetchAndAddWorksToModal() {
-        fetch('http://localhost:5678/api/works', {
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
-        })
+fetchAndDisplayCategories();
+
+function addCloseButton(modal) {
+    const closeButton = document.createElement('button');
+    closeButton.innerHTML = '&times;';
+    closeButton.classList.add('close-button'); 
+    closeButton.addEventListener('click', closeModal);
+
+    modal.appendChild(closeButton);
+}
+
+function displayProjectsInModal(modal) {
+    fetch('http://localhost:5678/api/works')
         .then(response => {
             if (!response.ok) {
-                throw new Error('Erreur de récupération des données.');
+                throw new Error('Erreur de récupération des projets.');
             }
             return response.json();
         })
         .then(data => {
-            localStorage.setItem('projectIds', JSON.stringify(data.map(project => project.id)));
+            modal.innerHTML = ''; // suppression du précédent contenu
 
-            // Ajouter les éléments récupérés à la modale
-            addElementsToModal(data);
+            data.forEach(project => {
+                const projectElement = document.createElement('div');
+                projectElement.classList.add('modal-project');
+                projectElement.setAttribute('id', `project-${project.id}`);
+
+                const imageElement = document.createElement('img');
+                imageElement.src = project.imageUrl;
+                imageElement.alt = project.title;
+
+                const deleteButton = document.createElement('button');
+                deleteButton.innerHTML = '&#128465;'; // l'icone "poubelle"
+                deleteButton.classList.add('delete-button');
+
+                deleteButton.addEventListener('click', () => {
+                    deleteProject(project.id)
+                        .then(() => {
+                            projectElement.remove(); // Retrait du projet de la modale
+                        })
+                        .catch(error => {
+                            console.error('Erreur lors de la suppression du projet :', error);
+                            alert('Erreur lors de la suppression du projet. Veuillez réessayer.');
+                        });
+                });
+
+                projectElement.appendChild(imageElement);
+                projectElement.appendChild(deleteButton);
+
+                modal.appendChild(projectElement);
+            });
+
+            // Ajout du bouton pour ajouter le nouveau projet
+            const addProjetButton = document.createElement('button');
+            addProjetButton.textContent = 'Ajouter un projet';
+            addProjetButton.classList.add('add-photo-button');
+
+            addProjetButton.addEventListener('click', (event) => {
+                event.stopPropagation();
+                addProjectFormToModal(modal);
+            });
+
+            modal.appendChild(addProjetButton);
+            addCloseButton(modal);
         })
         .catch(error => {
-            console.error('Une erreur s\'est produite lors de la récupération des données :', error);
+            console.error('Erreur lors de la récupération des projets :', error);
         });
+}
+
+function openModal() {
+    if (document.querySelector('.modal-container')) {
+        console.log("Une modale est déjà ouverte");
+        return;
     }
 
-    // Appel API pour récupérer les images des projets
-    fetchAndAddWorksToModal();
+    const backgroundModal = document.createElement('div');
+    backgroundModal.classList.add('background-modal');
 
-    // Ajouter un bouton "Ajouter une photo"
-    const addProjetButton = document.createElement('button');
-    addProjetButton.textContent = 'Ajouter un projet';
-    addProjetButton.classList.add('add-photo-button');
+    const modalContainer = document.createElement('div');
+    modalContainer.classList.add('modal-container');
 
-    // Ajouter un écouteur d'événements pour changer l'affichage de la modale
-    addProjetButton.addEventListener('click', (event) => {
-        event.stopPropagation(); // Empêcher la propagation de l'événement au conteneur de la modale, ce qui empêche la fermeture de la modale
-        console.log("Changement d'affichage pour ajouter une photo");
+    const modal = document.createElement('div');
+    modal.classList.add('custom-modal');
 
-        // Effacer le contenu existant de la modale
-        modal.innerHTML = '';
+    displayProjectsInModal(modal);
 
-        // Créer le formulaire pour ajouter un nouveau projet
-        const form = document.createElement('form');
-        form.classList.add('add-project-form');
-
-        // Champ pour l'URL de l'image
-        const imageUrlInput = document.createElement('input');
-        imageUrlInput.setAttribute('type', 'text');
-        imageUrlInput.setAttribute('placeholder', 'URL de l\'image');
-        imageUrlInput.setAttribute('name', 'imageUrl');
-
-        // Champ pour le titre du projet
-        const titleInput = document.createElement('input');
-        titleInput.setAttribute('type', 'text');
-        titleInput.setAttribute('placeholder', 'Titre du projet');
-        titleInput.setAttribute('name', 'title');
-
-        // Champ pour la catégorie du projet
-        const categoryInput = document.createElement('input');
-        categoryInput.setAttribute('type', 'text');
-        categoryInput.setAttribute('placeholder', 'Catégorie du projet');
-        categoryInput.setAttribute('name', 'category');
-
-        // Bouton de soumission du formulaire
-        const submitButton = document.createElement('button');
-        submitButton.setAttribute('type', 'submit');
-        submitButton.textContent = 'Ajouter';
-
-        // Ajouter les éléments au formulaire
-        form.appendChild(imageUrlInput);
-        form.appendChild(titleInput);
-        form.appendChild(categoryInput);
-        form.appendChild(submitButton);
-
-        // Ajouter le formulaire à la modale
-        modal.appendChild(form);
-
-        // Ajouter un gestionnaire d'événements pour la soumission du formulaire
-        form.addEventListener('submit', (event) => {
-            event.preventDefault();
-
-            const formData = new FormData(form);
-            const imageUrl = formData.get('imageUrl');
-            const title = formData.get('title');
-            const category = formData.get('category');
-
-            // Appel API pour ajouter le nouveau projet
-            addProject(imageUrl, title, category);
-        });
-
-         // Empêcher la propagation de l'événement de clic pour les inputs
-    imageUrlInput.addEventListener('click', (event) => {
-        event.stopPropagation();
-    });
-
-    titleInput.addEventListener('click', (event) => {
-        event.stopPropagation();
-    });
-
-    categoryInput.addEventListener('click', (event) => {
-        event.stopPropagation();
-    });
-
-    });
-
-    // Ajouter le bouton "Ajouter une photo" à la modale
-    modal.appendChild(addProjetButton);
-
-    // Ajouter un bouton de fermeture de la modale
-    const closeButton = document.createElement('button');
-    closeButton.textContent = 'Fermer'; // Texte du bouton
-    closeButton.classList.add('close-button'); // Classe CSS pour le style
-
-    // Ajouter un gestionnaire d'événements pour fermer la modale lorsque le bouton est cliqué
-    closeButton.addEventListener('click', closeModal);
-
-    // Ajouter le bouton à la modale
-    modal.appendChild(closeButton);
-
-    // Ajouter la modale au corps du document
     modalContainer.appendChild(modal);
     document.body.appendChild(backgroundModal);
     document.body.appendChild(modalContainer);
@@ -315,31 +201,66 @@ function openModal() {
     modalContainer.addEventListener('click', closeModal);
 }
 
-// Appel de la fonction d'initialisation au chargement de la page
-window.addEventListener('load', initializeApp);
+function addProjectFormToModal(modal) {
+    modal.innerHTML = '';
 
-// Fonction d'initialisation de l'application
-function initializeApp() {
-    var isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
-    updateLoginButton(isAuthenticated);
+    const form = document.createElement('form');
+    form.classList.add('add-project-form');
 
-    if (isAuthenticated) {
-        // Crée le bouton "Modifier" s'il n'existe pas déjà
-        if (!document.querySelector('.modify-button')) {
-            const modifyButton = document.createElement('button');
-            modifyButton.textContent = 'Modifier';
-            modifyButton.classList.add('modify-button');
+    const imageFileInput = document.createElement('input');
+    imageFileInput.setAttribute('type', 'file');
+    imageFileInput.setAttribute('accept', 'image/*');
+    imageFileInput.setAttribute('name', 'image');
 
-            // Ajoute un écouteur d'événements pour ouvrir la modale lorsque le bouton est cliqué
-            modifyButton.addEventListener('click', openModal);
+    const titleInput = document.createElement('input');
+    titleInput.setAttribute('type', 'text');
+    titleInput.setAttribute('placeholder', 'Titre du projet');
+    titleInput.setAttribute('name', 'title');
 
-            // Ajoute le bouton "Modifier" à côté de "Mes projets"
-            const portfolioSection = document.getElementById('portfolio');
-            const projectsTitle = portfolioSection.querySelector('h2');
-            projectsTitle.insertAdjacentElement('afterend', modifyButton); //append avec le title portfolio
-        }
+    const submitButton = document.createElement('button');
+    submitButton.setAttribute('type', 'submit');
+    submitButton.textContent = 'Ajouter';
 
-        // Appel de openModal après l'ajout du bouton Modifier
-        openModal();
+    form.appendChild(imageFileInput);
+    form.appendChild(titleInput);
+    form.appendChild(categorySelect);
+    form.appendChild(submitButton);
+
+    modal.appendChild(form);
+    addCloseButton(modal);
+
+    form.addEventListener('submit', (event) => {
+        event.preventDefault();
+
+        const imageFile = imageFileInput.files[0];
+        const title = titleInput.value;
+        const categoryId = categorySelect.value;
+
+        addProject(imageFile, title, categoryId);
+    });
+
+    imageFileInput.addEventListener('click', (event) => {
+        event.stopPropagation();
+    });
+
+    titleInput.addEventListener('click', (event) => {
+        event.stopPropagation();
+    });
+
+    form.addEventListener('click', (event) => {
+        event.stopPropagation();
+    });
+}
+
+function closeModal() {
+    const modalContainer = document.querySelector('.modal-container');
+    const backgroundModal = document.querySelector('.background-modal');
+
+    if (modalContainer) {
+        modalContainer.remove();
+    }
+
+    if (backgroundModal) {
+        backgroundModal.remove();
     }
 }
