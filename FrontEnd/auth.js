@@ -1,117 +1,122 @@
 var loginButton = document.getElementById('loginButton');
 var authForm = document.getElementById('authForm');
 
-
 function updateLoginButton(authenticated) {
-    if (authenticated) {
-        loginButton.textContent ='logout';
-    } else {
+    if (authenticated && loginButton) {
+        loginButton.textContent = 'logout';
+    } else if (loginButton) {
         loginButton.textContent = 'login';
     }
 }
 
-
-     // Gestion de la connexion/déconnexion
-     function loginLogoutHandler() {
-        if (localStorage.getItem('isAuthenticated') === 'true') {
-            logoutHandler();
-        } else {
-            // Redirection vers la page d'authentification
-            window.location.href = 'auth.html';
-         }
+// Login/Logout 
+function loginLogoutHandler() {
+    console.log("Appel login/logout");
+    if (localStorage.getItem('isAuthenticated') === 'true') {
+        console.log("L'utilisateur est authentifié");
+        logoutHandler();
+    } else {
+        console.log("L'utilisateur n'est pas authentifié, redirection ");
+        window.location.href = 'auth.html';
     }
+}
 
-    function logoutHandler() {
-        console.log("Je clique sur le bouton de déconnexion");
-        if (localStorage.getItem('isAuthenticated') === 'true') {
-            console.log("Je suis authentifié, je vais me déconnecter");
-            // Réinitialisation de l'état d'authentification
-            localStorage.removeItem('isAuthenticated');
-            localStorage.removeItem('userId');
-            localStorage.removeItem('token');
-            console.log("Je suis maintenant déconnecté");
-            // Mettre à jour l'interface utilisateur
-            updateLoginButton(false);
-            console.log("Je vais être redirigé vers la page d'accueil");
-  
-            window.location.replace('index.html');
-        } else {
-            console.log("Je ne suis pas authentifié, pas de déconnexion nécessaire.");
-        }
-    }
-
-    loginButton.addEventListener('click', loginLogoutHandler);
-
-    window.addEventListener('load', function() {
-        var isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
-        updateLoginButton(isAuthenticated);
-
-        if (isAuthenticated) {   //est ce qu'il vaut mieux pour le style créer un bouton dans le html ou créer de toute piece ce bouton dans le js ?///////////////
-
-            // Crée le bouton "Modifier"
-            const modifyButton = document.createElement('button');
-            modifyButton.textContent = 'Modifier';
-            modifyButton.classList.add('modify-button');
-        
-            // Ajoute un écouteur d'événements pour ouvrir la modale lorsque le bouton est cliqué
-            modifyButton.addEventListener('click', openModal);
-        
-            // Ajoute le bouton "Modifier" à côté de "Mes projets"
-            const portfolioSection = document.getElementById('portfolio');
-            const projectsTitle = portfolioSection.querySelector('h2');
-            projectsTitle.insertAdjacentElement('afterend', modifyButton); //append avec le title portfolio
-        }
-
-    });
-
-    //soumission formulaire authentification
-    authForm.addEventListener('submit', (event) => {
-        event.preventDefault();
-    
-
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-
-
-
- // Appel API pour l'authentification
-    fetch('http://localhost:5678/api/users/login', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ email, password })
-    })
-    .then(response => {
-        if (response.ok) {
-            // Authentification réussie
-            return response.json();
-        } else {
-            throw new Error('Identifiants incorrects');
-        }
-    })
-    .then(data => {
-       // Stockage des informations 
-       localStorage.setItem('userId', data.userId);
-       localStorage.setItem('token', data.token);
-       localStorage.setItem('isAuthenticated', 'true');
-
-
-       updateLoginButton(true);
-        console.log("je suis connecté");
-        // Redirection 
+// fonction deconnexion
+function logoutHandler() {
+    console.log("Appel de la fonction logout");
+    if (localStorage.getItem('isAuthenticated') === 'true') {
+        console.log("L'utilisateur est authentifié, logout en cours");
+        // Clear de l'état authentifié
+        localStorage.removeItem('isAuthenticated');
+        localStorage.removeItem('userId');
+        localStorage.removeItem('token');
+        console.log("L'utilisateur est déconnecté");
+        // Update UI
+        updateLoginButton(false);
+        console.log("Redirection vers la page d'accueil");
         window.location.replace('index.html');
-    })
-    .catch(error => {
+    } else {
+        console.log("L'utilisateur n'est pas authentifié, authentification requise");
+    }
+}
 
-        alert(error.message);
-    });
+// Ajout de l'event pour vérifier l'existence du bouton login
+if (loginButton) {
+    console.log("Ajout de l'event login au bouton");
+    loginButton.addEventListener('click', loginLogoutHandler);
+} else {
+    console.log("Login bouton non trouvé");
+}
+
+// Event du chargement de la page d'authentification
+window.addEventListener('load', function() {
+    console.log("Event chargement de la page lancé");
+    var isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
+    updateLoginButton(isAuthenticated);
+
+    if (isAuthenticated && !document.querySelector('.modify-button')) {
+        // Création du bouton "modifier"
+        console.log("Création du bouton 'Modifier'");
+        const modifyButton = document.createElement('button');
+        modifyButton.textContent = 'Modifier';
+        modifyButton.classList.add('modify-button');
+        //  Ajout de l'event pour l'ouverture de la modale
+        modifyButton.addEventListener('click', openModal);
+        // Ajout du bouton à côté de "Mes projets"
+        const portfolioSection = document.getElementById('portfolio');
+        if (portfolioSection) {
+            const projectsTitle = portfolioSection.querySelector('h2');
+            if (projectsTitle) {
+                projectsTitle.insertAdjacentElement('afterend', modifyButton);
+                console.log("'Modification du bouton modifier ok");
+            } else {
+                console.log("Titre projet non trouvé");
+            }
+        } else {
+            console.log("Section Porfolio non trouvée");
+        }
+    }
 });
 
+// Soumission du formulaire d'authentification
+if (authForm) {
+    console.log("Ajout de l'event pour la soumission du auth form");
+    authForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
 
+        // Appel API authentification
+        fetch('http://localhost:5678/api/users/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email, password })
+        })
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error('Identifiants incorrects');
+            }
+        })
+        .then(data => {
+            // Stockage des éléments d'authentification
+            localStorage.setItem('userId', data.userId);
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('isAuthenticated', 'true');
 
-
-
-
-
-
+            updateLoginButton(true);
+            console.log("L'utilisateur est authentifié, redirection page d'accueil");
+            window.location.replace('index.html');
+        })
+        .catch(error => {
+            console.log("Erreur durant l'authentification " + error.message);
+            alert(error.message);
+        });
+    });
+} else {
+    console.log("Auth form non trouvé");
+}
