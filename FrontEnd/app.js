@@ -68,6 +68,16 @@ document.addEventListener('DOMContentLoaded', () => {
   function buildFilters(categories) {
       const filterDiv = document.querySelector('#portfolio .filter');
       filterDiv.innerHTML = ''; // Efface les filtres existants
+
+      // Ajout du bouton "Tous" pour afficher tous les projets
+    const allButton = document.createElement('button');
+    allButton.classList.add('filter-button');
+    allButton.textContent = 'Tous';
+    allButton.addEventListener('click', () => {
+        displayProjects(null); 
+    });
+    filterDiv.appendChild(allButton);
+
       categories.forEach(category => {
           const filterButton = document.createElement('button');
           filterButton.classList.add('filter-button');
