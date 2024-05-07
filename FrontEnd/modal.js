@@ -127,7 +127,22 @@ function displayProjectsInModal(modal) {
             return response.json();
         })
         .then(data => {
-            modal.innerHTML = ''; // suppression du précédent contenu
+            modal.innerHTML = ''; // suppression du contenu précédent
+
+            //Ajout du header de la modale
+            const modalHeader = document.createElement('div');
+            modalHeader.classList.add('modal-header');
+
+            const title = document.createElement('h2');
+            title.textContent = 'Galerie photo';
+            title.classList.add('modal-title');
+
+            modalHeader.appendChild(title);
+            modal.appendChild(modalHeader);
+
+            // Ajout container projets
+            const modalContent = document.createElement('div');
+            modalContent.classList.add('modal-content');
 
             data.forEach(project => {
                 const projectElement = document.createElement('div');
@@ -139,13 +154,17 @@ function displayProjectsInModal(modal) {
                 imageElement.alt = project.title;
 
                 const deleteButton = document.createElement('button');
-                deleteButton.innerHTML = '&#128465;'; // l'icone "poubelle"
                 deleteButton.classList.add('delete-button');
+
+                const removeIcon = document.createElement('i');
+                removeIcon.classList.add('far', 'fa-trash-alt');
+
+                deleteButton.appendChild(removeIcon);
 
                 deleteButton.addEventListener('click', () => {
                     deleteProject(project.id)
                         .then(() => {
-                            projectElement.remove(); // Retrait du projet de la modale
+                            projectElement.remove(); // Suppression du projet de la modale
                         })
                         .catch(error => {
                             console.error('Erreur lors de la suppression du projet :', error);
@@ -156,10 +175,15 @@ function displayProjectsInModal(modal) {
                 projectElement.appendChild(imageElement);
                 projectElement.appendChild(deleteButton);
 
-                modal.appendChild(projectElement);
+                modalContent.appendChild(projectElement);
             });
 
-            // Ajout du bouton pour ajouter le nouveau projet
+            modal.appendChild(modalContent);
+
+        // Ajout du footer
+            const modalFooter = document.createElement('div');
+            modalFooter.classList.add('modal-footer');
+
             const addProjetButton = document.createElement('button');
             addProjetButton.textContent = 'Ajouter un projet';
             addProjetButton.classList.add('add-photo-button');
@@ -169,13 +193,17 @@ function displayProjectsInModal(modal) {
                 addProjectFormToModal(modal);
             });
 
-            modal.appendChild(addProjetButton);
+            modalFooter.appendChild(addProjetButton);
+            modal.appendChild(modalFooter);
+
             addCloseButton(modal);
         })
         .catch(error => {
             console.error('Erreur lors de la récupération des projets :', error);
         });
 }
+
+
 
 function openModal() {
     if (document.querySelector('.modal-container')) {

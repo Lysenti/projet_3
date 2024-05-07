@@ -1,35 +1,79 @@
-/* Container for each project in the modal */
+/* Style du header de la modale */
+.modal-header {
+    display: flex;
+    justify-content: center;
+    width: 75%; 
+    margin-bottom: 70px;
+    margin-top: 50px; 
+}
+
+
+/* Container du contenu de la modale*/
+.modal-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    width: 80%; 
+}
+
+.modal-footer {
+    display: flex;
+    justify-content: center;
+    width: 60%;
+    margin-top: 50px; 
+    padding-top: 50px;
+    border-top: 1px solid #B3B3B3;
+}
+
+/* Style du bouton d'ajout de projet */
+.add-photo-button {
+    width: 75%; 
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #1D6154;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 60px;
+}
+
+
+
+/* Container de chaque projet de la modale */
 .modal-project {
-    flex-basis: 20%; /* Adjust the width for 5 projects per row */
+    flex-basis: 18%; /* ajustement du nbre de projets par ligne */
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 5px;
+    margin-bottom: 20px; 
+    position: relative; /* Positiondu bouton delete */
+}
+
+
+.delete-button {
+    position: absolute;
+    top: 5%;
+    right: 5%;
+    background-color: black;
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 0.8em; 
+    padding: 3px;
+    border-radius: 2px;
+}
+
+
+.custom-modal {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 20px; /* Spacing between rows of projects */
-    position: relative; /* Positioning for the delete button */
-}
-
-/* Styling for the delete button */
-.delete-button {
-    position: absolute;
-    top: 0;
-    right: 0;
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    font-size: 24px;
-    color: red;
-    padding: 5px;
-}
-
-/* Styling for the custom modal */
-.custom-modal {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-around; /* Equal spacing between images */
-    width: 630px; /* Width of the modal */
-    height: auto; /* Adjust the height based on content */
+    width: 630px; 
+    height: auto;
+    border-radius: 10px; 
     background-color: white;
-    padding: 20px;
+    padding: 20px; 
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     position: fixed;
     top: 50%;
@@ -39,14 +83,13 @@
     z-index: 1000;
 }
 
-/* Styling for the project image */
+
 .modal-project img {
-    width: 70%; /* Adjust the width to fit 5 images per row */
-    height: auto; /* Maintain the aspect ratio */
-    margin: 10px; /* Spacing between images */
+    width: 100%; 
+    height: auto; 
 }
 
-/* Styling for the background overlay of the modal */
+
 .background-modal {
     position: fixed;
     top: 0;
@@ -57,23 +100,11 @@
     z-index: 999;
 }
 
-/* Styling for the "Add Project" button */
-.add-photo-button {
-    display: inline-block;
-    margin: 10px;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    border: none;
-    cursor: pointer;
-    border-radius: 4px;
-}
 
-/* Styling for the close button in the modal */
 .close-button {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top: 5px;
+    right: 5px;
     background-color: transparent;
     border: none;
     cursor: pointer;
