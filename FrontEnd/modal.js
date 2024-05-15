@@ -2,6 +2,20 @@ var categorySelect = document.createElement('select');
 categorySelect.setAttribute('name', 'category');
 categorySelect.setAttribute('id', 'category');
 
+
+function createModifyButton() {
+    const projectsHeader = document.querySelector('.projects-header');
+    if (projectsHeader) {
+        const modifyButton = document.createElement('button');
+        modifyButton.classList.add('modify-button');
+        modifyButton.innerHTML = '<i class="fa fa-pen-to-square"></i> Modifier';
+        modifyButton.addEventListener('click', openModal);
+        projectsHeader.appendChild(modifyButton);
+    }
+}
+
+
+
 // Fonction pour gérer l'affichage du bouton "Modifier"
 function toggleModifyButton(authenticated) {
     const modifyButton = document.querySelector('.modify-button');
@@ -16,19 +30,7 @@ function toggleModifyButton(authenticated) {
     }
 }
 
-function createModifyButton() {
-    const modifyButton = document.createElement('button');
-    modifyButton.textContent = 'Modifier';
-    modifyButton.classList.add('modify-button');
-    modifyButton.addEventListener('click', openModal);
-    const portfolioSection = document.getElementById('portfolio');
-    if (portfolioSection) {
-        const projectsTitle = portfolioSection.querySelector('h2');
-        if (projectsTitle) {
-            projectsTitle.insertAdjacentElement('afterend', modifyButton);
-        }
-    }
-}
+
 
 function addProject(imageFile, title, categoryId) {
     const formData = new FormData();
