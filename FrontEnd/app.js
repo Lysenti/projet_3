@@ -39,15 +39,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
   }
   
-  function createModifyButton() {
-      const modifyButton = document.createElement('button');
-      modifyButton.textContent = 'Modifier';
-      modifyButton.classList.add('modify-button');
-      modifyButton.addEventListener('click', openModal);
-      const portfolioSection = document.getElementById('portfolio');
-      const projectsTitle = portfolioSection.querySelector('h2');
-      projectsTitle.insertAdjacentElement('afterend', modifyButton);
-  }
+
   
   function openModalButton() {
       if (!document.querySelector('.modify-button')) {
@@ -106,6 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
               projectsToDisplay.forEach(project => {
                   const projectFigure = document.createElement('figure');
                   projectFigure.classList.add('category');
+                  projectFigure.setAttribute('id', `project-${project.id}`);
                   const imageElement = document.createElement('img');
                   imageElement.src = project.imageUrl;
                   imageElement.alt = project.title;
