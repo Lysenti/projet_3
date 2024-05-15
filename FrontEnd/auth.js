@@ -60,13 +60,21 @@ window.addEventListener('load', function() {
         const modifyButton = document.createElement('button');
         modifyButton.textContent = 'Modifier';
         modifyButton.classList.add('modify-button');
+
         //  Ajout de l'event pour l'ouverture de la modale
         modifyButton.addEventListener('click', openModal);
+        
         // Ajout du bouton à côté de "Mes projets"
         const portfolioSection = document.getElementById('portfolio');
         if (portfolioSection) {
             const projectsTitle = portfolioSection.querySelector('h2');
             if (projectsTitle) {
+
+                projectsTitle.parentNode.style.display = 'flex';
+                projectsTitle.parentNode.style.justifyContent = 'space-between';
+                projectsTitle.parentNode.style.alignItems = 'center';
+                projectsTitle.parentNode.style.flexWrap = 'nowrap'; 
+
                 projectsTitle.insertAdjacentElement('afterend', modifyButton);
                 console.log("'Modification du bouton modifier ok");
             } else {
@@ -77,6 +85,8 @@ window.addEventListener('load', function() {
         }
     }
 });
+
+
 
 // Soumission du formulaire d'authentification
 if (authForm) {

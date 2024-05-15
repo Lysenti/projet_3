@@ -12,28 +12,33 @@
 </head>
 <body class="auth_body">
 <header>
-	<h1>Sophie Bluel <span>Architecte d'intérieur</span></h1>
+	<h1 id="auth_h1">Sophie Bluel <span>Architecte d'intérieur</span></h1>
 	<nav>
 		<ul>
 			<li>projets</li>
 			<li>contact</li>
-			<button id="loginButton">Login</button>
+			<li><button id="loginButton">Login</button></li>
 			<li><img src="./assets/icons/instagram.png" alt="Instagram"></li>
 		</ul>
 	</nav>
 </header>
 
-<main class = 'auth-form-container'>
+<main>
+    <section class = 'auth-form-container' id="auth-form">
 
-    <h2>Connexion</h2>
+    <h2>Log in</h2>
     <form id="authForm">
       <label for="email">Email</label>
       <input type="email" id="email" name="email" required>
       <label for="password">Mot de passe</label>
       <input type="password" id="password" name="password" required>
-      <button type="submit" >Se connecter</button>
+      <button type="submit" class="connexion-button" >Se connecter</button>
     </form>
-  </main>
+    <p class="forgotPassword">Mot de passe oublié</p>
+
+    </section>
+
+</main>
 
 
 

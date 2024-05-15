@@ -27,3 +27,21 @@
     background-color: #1D6154;
     color: white;
 }
+
+#loginButton {
+    border: none;
+    background-color: #FFFEF8;
+    font: inherit;
+}
+
+#loginButton:hover {
+    color: #B1663C;
+}
+
+
+.modify-button {
+    border: none;
+    background-color: #FFFEF8;
+    margin-left: 20px;
+}
+

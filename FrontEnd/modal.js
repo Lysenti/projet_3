@@ -76,6 +76,16 @@ function deleteProject(projectId) {
             });
         }
         console.log(`Projet ${projectId} supprimé avec succès.`);
+
+        // Suppression directe de l'élément du projet dans la page d'accueil
+        const projectElement = document.getElementById(`project-${projectId}`);
+        if (projectElement) {
+            projectElement.remove();
+        }
+    })
+    .catch(error => {
+        console.error('Erreur lors de la suppression du projet :', error);
+        alert('Erreur lors de la suppression du projet. Veuillez réessayer.');
     });
 }
 
@@ -225,60 +235,143 @@ function openModal() {
     modalContainer.appendChild(modal);
     document.body.appendChild(backgroundModal);
     document.body.appendChild(modalContainer);
-    backgroundModal.addEventListener('click', closeModal);
-    modalContainer.addEventListener('click', closeModal);
+    modal.addEventListener('click', (event) => {
+        event.stopPropagation();
+    });
 }
 
 function addProjectFormToModal(modal) {
     modal.innerHTML = '';
 
+    // Bouton de retour
+    addBackButton(modal);
+
     const form = document.createElement('form');
     form.classList.add('add-project-form');
 
-    const imageFileInput = document.createElement('input');
-    imageFileInput.setAttribute('type', 'file');
-    imageFileInput.setAttribute('accept', 'image/*');
-    imageFileInput.setAttribute('name', 'image');
+     // Titre "Ajout photo"
+     const photoTitle= document.createElement('h3');
+     photoTitle.className = 'add-photo-title';
+     photoTitle.textContent = 'Ajout photo';
 
+     // Container pour l'input personnalisé de type file
+    const fileInputContainer = document.createElement('div');
+    fileInputContainer.className = 'file-input-container';
+
+    const rectangle = document.createElement('div');
+    rectangle.className = 'file-input-rectangle';
+
+    // Ajout de l'icône SVG
+    const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    svg.setAttribute("viewBox", "0 0 24 24");
+    svg.setAttribute("class", "upload-icon");
+    svg.innerHTML = '<path d="M0,2v20h24V2H0z M22,4v11l-5-5l-5,5l-3-3l-7,7V4H22z"></path>'; // Exemple de path pour une icône de maison, à remplacer par l'icône désirée
+
+    
+    const label = document.createElement('label');
+    label.className = 'file-input-trigger';
+    label.textContent = '+Ajouter photo';
+
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.className = 'file-input';
+    input.accept = 'image/*';
+    input.name = 'image';
+    input.style.display = 'none';
+    input.addEventListener('change', handleFileSelect);
+    label.appendChild(input);
+
+    const acceptedFormats = document.createElement('div');
+    acceptedFormats.className = 'accepted-formats';
+    acceptedFormats.textContent = 'JPG, PNG - 4Mo max';
+
+    
+    // Création et ajout de l'aperçu de l'image
+    const imagePreview = document.createElement('img');
+    imagePreview.id = 'image-preview';
+    imagePreview.className = 'image-preview';
+    imagePreview.style.display = 'none';
+
+    rectangle.appendChild(svg);
+    rectangle.appendChild(imagePreview);
+    rectangle.appendChild(label);
+    rectangle.appendChild(acceptedFormats);
+    fileInputContainer.appendChild(rectangle);
+
+    // Titre pour le champ "Titre du projet"
+    const titleLabel = document.createElement('h4');
+    titleLabel.className = 'input-title';
+    titleLabel.textContent = 'Titre';
+
+    // Champ de texte pour le titre du projet
     const titleInput = document.createElement('input');
-    titleInput.setAttribute('type', 'text');
-    titleInput.setAttribute('placeholder', 'Titre du projet');
-    titleInput.setAttribute('name', 'title');
+    titleInput.type = 'text';
+    //titleInput.placeholder = 'Titre du projet';
+    titleInput.name = 'title';
+
+     // Titre pour le sélecteur de catégorie
+     const categoryLabel = document.createElement('h4');
+     categoryLabel.className = 'input-title';
+     categoryLabel.textContent = 'Catégorie';
+
+    form.appendChild(photoTitle); // Ajout du titre "Ajout photo"
+    form.appendChild(fileInputContainer);
+    form.appendChild(titleLabel); // Ajout du titre pour le champ de texte
+    form.appendChild(titleInput);
+    form.appendChild(categoryLabel); // Ajout du titre pour le sélecteur de catégorie
+    form.appendChild(categorySelect);
+
+    // Conteneur pour le bouton "Valider" avec bordure supérieure
+    const buttonContainer = document.createElement('div');
+    buttonContainer.className = 'add-project-button-container';
 
     const submitButton = document.createElement('button');
-    submitButton.setAttribute('type', 'submit');
-    submitButton.textContent = 'Ajouter';
+    submitButton.type = 'submit';
+    submitButton.textContent = 'Valider';
+    submitButton.classList.add('add-project-button');
+    buttonContainer.appendChild(submitButton);
 
-    form.appendChild(imageFileInput);
-    form.appendChild(titleInput);
-    form.appendChild(categorySelect);
-    form.appendChild(submitButton);
-
+    form.appendChild(buttonContainer);
+    
     modal.appendChild(form);
     addCloseButton(modal);
 
     form.addEventListener('submit', (event) => {
         event.preventDefault();
-
-        const imageFile = imageFileInput.files[0];
+        const imageFile = input.files[0];
         const title = titleInput.value;
         const categoryId = categorySelect.value;
-
         addProject(imageFile, title, categoryId);
     });
-
-    imageFileInput.addEventListener('click', (event) => {
-        event.stopPropagation();
-    });
-
-    titleInput.addEventListener('click', (event) => {
-        event.stopPropagation();
-    });
-
-    form.addEventListener('click', (event) => {
-        event.stopPropagation();
-    });
 }
+
+function handleFileSelect(event) {
+    var files = event.target.files;
+    if (files.length === 1) {
+        var file = files[0];
+        var reader = new FileReader();
+
+        reader.onload = function(e) {
+            var preview = document.getElementById('image-preview');
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+            preview.style.width = '33%';  // Ajuste la largeur à 33%
+            preview.style.height = 'auto'; // Ajuste la hauteur proportionnellement
+            preview.style.margin = '0 auto'; // Centre l'image
+        };
+
+        reader.readAsDataURL(file);
+    }
+}
+
+function addBackButton(modal) {
+    const backButton = document.createElement('button');
+    backButton.innerHTML = '&#8592;'; 
+    backButton.classList.add('back-button'); 
+    backButton.addEventListener('click', () => displayProjectsInModal(modal));
+    modal.appendChild(backButton);
+}
+
 
 function closeModal() {
     const modalContainer = document.querySelector('.modal-container');
