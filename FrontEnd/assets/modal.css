@@ -66,6 +66,11 @@
     border-radius: 60px;
 }
 
+.add-project-button:disabled {
+    background-color: grey; /* Couleur grise lorsqu'il est désactivé */
+    cursor: not-allowed; /* Changer le curseur pour indiquer que le bouton n'est pas cliquable */
+}
+
 /* Centrage des éléments du formulaire */
 .add-project-form {
     display: flex;
@@ -73,7 +78,6 @@
     align-items: center;
     width: 60%;
 }
-
 
 
 /* Container de chaque projet de la modale */
@@ -257,9 +261,39 @@
     margin: auto;
 }
 
+.add-project-form select:invalid {
+    background-color: white;
+}
+
 .input-title {
     margin-top: 20px;
     margin-bottom: 5px;
     font-size: 1.2em;
     color: #1D6154;
 }
+
+.projects-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px; /* Espace entre le titre et le bouton */
+    margin-bottom: 20px;
+}
+
+.projects-header h2 {
+    margin: 0; /* Supprime la marge par défaut */
+}
+
+.modify-button {
+    border: none;
+    background-color: #FFFEF8;
+    padding: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-bottom: 25px;
+}
+
+.modify-button:hover {
+    color: #B1663C;
+}
+

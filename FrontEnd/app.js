@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function initializeApp() {
       var isAuthenticated = localStorage.getItem('isAuthenticated') === 'true';
       updateLoginButton(isAuthenticated);
+      createProjectsHeader();
       toggleModifyButton(isAuthenticated);
       // Appel des categories et projets
       fetchCategories()
@@ -30,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const modifyButton = document.querySelector('.modify-button');
       if (authenticated) {
           if (!modifyButton) {
-              createModifyButton();
+              modifyButton();
           }
       } else {
           if (modifyButton) {
@@ -38,6 +39,20 @@ document.addEventListener('DOMContentLoaded', () => {
           }
       }
   }
+
+  function createProjectsHeader() {
+    const portfolio = document.getElementById('portfolio');
+    const projectsHeader = document.createElement('div');
+    projectsHeader.classList.add('projects-header');
+
+    const title = document.createElement('h2');
+    title.textContent = 'Mes projets';
+    projectsHeader.appendChild(title);
+
+    portfolio.insertBefore(projectsHeader, portfolio.firstChild);
+}
+
+
   
 
   

@@ -2,6 +2,20 @@ var categorySelect = document.createElement('select');
 categorySelect.setAttribute('name', 'category');
 categorySelect.setAttribute('id', 'category');
 
+
+function createModifyButton() {
+    const projectsHeader = document.querySelector('.projects-header');
+    if (projectsHeader) {
+        const modifyButton = document.createElement('button');
+        modifyButton.classList.add('modify-button');
+        modifyButton.innerHTML = '<i class="fa fa-pen-to-square"></i> Modifier';
+        modifyButton.addEventListener('click', openModal);
+        projectsHeader.appendChild(modifyButton);
+    }
+}
+
+
+
 // Fonction pour gérer l'affichage du bouton "Modifier"
 function toggleModifyButton(authenticated) {
     const modifyButton = document.querySelector('.modify-button');
@@ -16,19 +30,7 @@ function toggleModifyButton(authenticated) {
     }
 }
 
-function createModifyButton() {
-    const modifyButton = document.createElement('button');
-    modifyButton.textContent = 'Modifier';
-    modifyButton.classList.add('modify-button');
-    modifyButton.addEventListener('click', openModal);
-    const portfolioSection = document.getElementById('portfolio');
-    if (portfolioSection) {
-        const projectsTitle = portfolioSection.querySelector('h2');
-        if (projectsTitle) {
-            projectsTitle.insertAdjacentElement('afterend', modifyButton);
-        }
-    }
-}
+
 
 function addProject(imageFile, title, categoryId) {
     const formData = new FormData();
@@ -265,7 +267,7 @@ function addProjectFormToModal(modal) {
     const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     svg.setAttribute("viewBox", "0 0 24 24");
     svg.setAttribute("class", "upload-icon");
-    svg.innerHTML = '<path d="M0,2v20h24V2H0z M22,4v11l-5-5l-5,5l-3-3l-7,7V4H22z"></path>'; // Exemple de path pour une icône de maison, à remplacer par l'icône désirée
+    svg.innerHTML = '<path d="M0,2v20h24V2H0z M22,4v11l-5-5l-5,5l-3-3l-7,7V4H22z"></path>'; 
 
     
     const label = document.createElement('label');
@@ -277,6 +279,7 @@ function addProjectFormToModal(modal) {
     input.className = 'file-input';
     input.accept = 'image/*';
     input.name = 'image';
+    input.required = true;
     input.style.display = 'none';
     input.addEventListener('change', handleFileSelect);
     label.appendChild(input);
@@ -306,13 +309,39 @@ function addProjectFormToModal(modal) {
     // Champ de texte pour le titre du projet
     const titleInput = document.createElement('input');
     titleInput.type = 'text';
-    //titleInput.placeholder = 'Titre du projet';
     titleInput.name = 'title';
+    titleInput.required = true;
 
      // Titre pour le sélecteur de catégorie
      const categoryLabel = document.createElement('h4');
      categoryLabel.className = 'input-title';
      categoryLabel.textContent = 'Catégorie';
+
+     // Sélecteur de catégorie
+    const categorySelect = document.createElement('select');
+    categorySelect.name = 'category';
+    categorySelect.required = true;
+
+    // Ajout de l'option vide
+    const emptyOption = document.createElement('option');
+    emptyOption.value = '';
+    emptyOption.textContent = '';
+    emptyOption.disabled = true;
+    emptyOption.selected = true;
+    categorySelect.appendChild(emptyOption);
+
+   // Ajout des autres options (exemple)
+   const categories = [
+    { id: 1, name: 'Objets' },
+    { id: 2, name: 'Appartements' },
+    { id: 3, name: 'Hôtels et restaurants' }
+    ];
+    categories.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category.id;
+        option.textContent = category.name;
+        categorySelect.appendChild(option);
+    });
 
     form.appendChild(photoTitle); // Ajout du titre "Ajout photo"
     form.appendChild(fileInputContainer);
@@ -329,12 +358,24 @@ function addProjectFormToModal(modal) {
     submitButton.type = 'submit';
     submitButton.textContent = 'Valider';
     submitButton.classList.add('add-project-button');
+    submitButton.disabled = true;
     buttonContainer.appendChild(submitButton);
 
     form.appendChild(buttonContainer);
     
     modal.appendChild(form);
     addCloseButton(modal);
+
+    // Fonction pour vérifier si tous les champs sont remplis
+    function checkFormValidity() {
+        submitButton.disabled = !(input.files.length > 0 && titleInput.value.trim() !== '' && categorySelect.value !== '');
+    }
+
+    // Ajouter des écouteurs d'événements pour vérifier la validité du formulaire
+    input.addEventListener('change', checkFormValidity);
+    titleInput.addEventListener('input', checkFormValidity);
+    categorySelect.addEventListener('change', checkFormValidity);
+
 
     form.addEventListener('submit', (event) => {
         event.preventDefault();
