@@ -410,7 +410,7 @@ function addBackButton(modal) {
     backButton.innerHTML = '&#8592;'; 
     backButton.classList.add('back-button'); 
     backButton.addEventListener('click', () => displayProjectsInModal(modal));
-    modal.appendChild(backButton);
+    modal.insertBefore(backButton, modal.firstChild);
 }
 
 

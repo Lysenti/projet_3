@@ -1,3 +1,16 @@
+/* Style pour le bouton de retour */
+.back-button {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 24px;
+    color: black;
+    z-index: 1000;
+}
+
 /* Style du header de la modale */
 .modal-header {
     display: flex;
@@ -76,6 +89,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     width: 60%;
 }
 
@@ -154,23 +168,14 @@
     padding: 5px;
 }
 
-/* Style pour le bouton de retour */
-.back-button {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background-color: transparent;
-    border: none;
-    cursor: pointer;
-    font-size: 24px;
-    color: black;
-}
+
 
 /* Style pour l'input de type file personnalisé */
 .file-input-container {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     width: 100%;
     margin-top: 20px;
 }
@@ -180,14 +185,14 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 420px;
-    height: 169px;
+    width: 375px;
+    height: 142px;
     border: none;
     position: relative;
     overflow: hidden;
     background-color: #E8F1F6;
     text-align: center;
-    margin: auto;
+    margin: 0 auto;
     margin-bottom: 100px;
 }
 
@@ -215,6 +220,7 @@
     border-radius: 60px;
     position: relative;
     overflow: hidden;
+
 }
 
 .file-input-trigger:hover {
@@ -253,6 +259,7 @@
 .add-project-form input[type="text"],
 .add-project-form select {
     width: 100%;
+    box-sizing: border-box;
     padding-top: 5px;
     padding-bottom: 5px;
     margin-bottom: 20px;
