@@ -7,6 +7,11 @@ document.addEventListener('DOMContentLoaded', () => {
       updateLoginButton(isAuthenticated);
       createProjectsHeader();
       toggleModifyButton(isAuthenticated);
+
+      if (isAuthenticated) {
+        addEditModeBanner();
+      }
+
       // Appel des categories et projets
       fetchCategories()
           .then(categories => {
@@ -129,4 +134,31 @@ document.addEventListener('DOMContentLoaded', () => {
           });
   }
   
+  function addEditModeBanner() {
+    // Créer la bande noire
+    const banner = document.createElement('div');
+    banner.className = 'edit-mode-banner';
+
+    // Créer l'icône Font Awesome
+    const icon = document.createElement('i');
+    icon.className = 'fa fa-pen-to-square edit-mode-icon';
+
+    // Créer le texte
+    const text = document.createElement('span');
+    text.className = 'edit-mode-text';
+    text.textContent = 'mode édition';
+
+    // Ajouter l'icône et le texte à la bande
+    banner.appendChild(icon);
+    banner.appendChild(text);
+
+    // Ajouter la bande en haut de la page
+    document.body.prepend(banner);
+}
+
+// Vérifiez si l'utilisateur est authentifié
+if (authentified === true) {
+    addEditModeBanner();
+}
+
   
