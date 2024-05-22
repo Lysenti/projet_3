@@ -23,6 +23,11 @@
     min-width: 100px;
 }
 
+.filter-button.active {
+    background-color: #1D6154;
+    color: white;
+}
+
 .filter-button:hover, .filter-button:active { 
     background-color: #1D6154;
     color: white;
